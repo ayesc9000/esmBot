@@ -7,12 +7,12 @@ services:
     image: esmbot
     restart: unless-stopped
     volumes:
-      - ./logs:/app/logs
-      - ./bot-help:/app/help
-      - ./bot-temp:/app/temp
-      - ./config:/app/config
+      - ${ESM_LOGS}:/app/logs
+      - ${ESM_HELP}:/app/help
+      - ${ESM_TEMP}:/app/temp
+      - ${ESM_CONFIG}:/app/config
     env_file:
-      - .env
+      - ${ESM_ENV}
     environment:
       OUTPUT: /app/help/help.md
       TEMPDIR: /app/temp
@@ -34,7 +34,8 @@ services:
     image: ghcr.io/lavalink-devs/lavalink:4
     restart: unless-stopped
     volumes:
-      - ./application.yml:/opt/Lavalink/application.yml
+      - ${LAVA_APP}:/opt/Lavalink/application.yml
+      - ${LAVA_PLUGS}:/opt/Lavalink/plugins/
     healthcheck:
         test: "curl -H \"Authorization: $$(cat /opt/Lavalink/application.yml | grep password: | sed 's/^ *password: //g' | tr -d '\"')\" -f http://localhost:2333/version"
         interval: 10s
@@ -50,19 +51,14 @@ services:
     image: postgres:13-alpine
     restart: unless-stopped
     volumes:
-      - pg-data:/var/lib/postgresql/data
+      - ${PG_DATA}:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: verycoolpass100
-      POSTGRES_USER: esmbot
-      POSTGRES_DB: esmbot
+      POSTGRES_PASSWORD: ${PG_PASS}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_DB: ${PG_DB}
     networks:
       esmbot:
         ipv4_address: 172.20.0.4
-
-volumes:
-  bot-help:
-  bot-temp:
-  pg-data:
 
 networks:
   esmbot:
