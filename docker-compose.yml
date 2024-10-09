@@ -11,8 +11,7 @@ services:
       - ${ESM_HELP}:/app/help
       - ${ESM_TEMP}:/app/temp
       - ${ESM_CONFIG}:/app/config
-    env_file:
-      - ${ESM_ENV}
+      - ${ESM_ENV}:/app/.env
     environment:
       OUTPUT: /app/help/help.md
       TEMPDIR: /app/temp
