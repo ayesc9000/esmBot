@@ -32,7 +32,6 @@ services:
   lavalink:
     container_name: lavalink
     image: ghcr.io/lavalink-devs/lavalink:4
-    pull-policy: always
     restart: unless-stopped
     volumes:
       - ${LAVA_APP}:/opt/Lavalink/application.yml
@@ -50,7 +49,6 @@ services:
   postgres:
     container_name: postgres
     image: postgres:13-alpine
-    pull-policy: always
     restart: unless-stopped
     volumes:
       - ${PG_DATA}:/var/lib/postgresql/data
