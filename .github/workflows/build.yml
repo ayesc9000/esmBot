@@ -4,10 +4,6 @@ on:
   push:
     branches: [ master ]
 
-env:
-  BUILD_TYPE: Release
-  IMAGE_NAME: esmbot
-
 jobs:
   pub_image:
     name: Publish Docker image to GitHub Container Registry
@@ -18,18 +14,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build image
-        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"         
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-      - name: Push image
+      - name: Setup variables
         run: |
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+          echo $IMAGE_ID
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          echo $IMAGE_ID
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          echo $VERSION
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          echo $VERSION
           [ "$VERSION" == "main" ] && VERSION=latest
+          echo $VERSION
+      - name: Push image
+        run: |
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker tag esmbot $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
 
