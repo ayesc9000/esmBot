@@ -1,0 +1,10 @@
+version: "1"
+rules:                      # Array of rules
+  - base: master            # Required. Target branch
+    upstream: esmBot:master # Required. Must be in the same fork network.
+    mergeMethod: rebase     # Optional, one of [none, merge, squash, rebase, hardreset], Default: none.
+    mergeUnstable: false    # Optional, merge pull request even when the mergeable_state is not clean. Default: false
+    conflictReviewers:      # Optional, on merge conflict assign a reviewer
+      - ayesc9000
+label: ":arrow_heading_down: Automatic pull"  # Optional
+conflictLabel: ":x: Merge conflict"     # Optional, on merge conflict assign a custom label, Default: merge-conflict
