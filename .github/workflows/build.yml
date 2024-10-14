@@ -11,7 +11,7 @@ env:
 jobs:
   pub_image:
     name: Publish Docker image to GitHub Container Registry
-    runs-on: ubuntu_latest
+    runs-on: ubuntu-latest
     permissions:
       packages: read
       contents: write
