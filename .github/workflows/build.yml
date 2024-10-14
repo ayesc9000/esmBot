@@ -1,50 +1,35 @@
-name: Build Test
+name: Publish Docker Image
 
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 env:
   BUILD_TYPE: Release
+  IMAGE_NAME: esmbot
 
 jobs:
-  linux:
-    runs-on: ubuntu-latest
+  pub_image:
+    name: Publish Docker image to GitHub Container Registry
+    runs-on: ubuntu_latest
+    permissions:
+      packages: read
+      contents: write
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v3.0.0
-      with:
-        version: 9.4.0
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v4.0.1
-      with:
-        node-version: 20
-        cache: pnpm
-    - name: Install dependencies
-      run: sudo apt update && sudo apt install -y cmake libvips-dev libmagick++-dev libzxingcore-dev
-    - name: Build
-      run: pnpm install --frozen-lockfile --no-optional && pnpm run build
-
-  darwin:
-    runs-on: macos-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v3.0.0
-      with:
-        version: 9.4.0
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v4.0.1
-      with:
-        node-version: 20
-        cache: pnpm
-    - name: Install dependencies
-      run: brew install imagemagick vips
-    - name: Build
-      run: pnpm install --frozen-lockfile --no-optional && pnpm run build --CDWITH_ZXING=OFF
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Push image
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [ "$VERSION" == "main" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
 
