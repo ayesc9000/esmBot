@@ -19,7 +19,7 @@ RUN corepack enable
 COPY . /app
 WORKDIR /app
 # needed for msfonts
-RUN add-apt-repository 'http://deb.debian.org/debian bullseye main contrib non-free'
+RUN echo "deb http://deb.debian.org/debian bookworm contrib non-free" > /etc/apt/sources.list.d/contrib.list
 RUN apt-get update && apt-get install curl build-essential cmake ffmpeg sqlite3 ttf-mscorefonts-installer libvips-dev libzxingcore-dev
 #RUN apk --no-cache upgrade
 #RUN apk add --no-cache msttcorefonts-installer freetype fontconfig \
