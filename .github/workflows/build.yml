@@ -20,9 +20,7 @@ jobs:
       - name: Push image
         run: |
           IMAGE_ID=ghcr.io/ayesc9000/esmbot
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-          [ "$VERSION" == "main" ] && VERSION=latest
+          VERSION=$GITHUB_RUN_NUMBER
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           docker tag esmbot $IMAGE_ID:$VERSION
