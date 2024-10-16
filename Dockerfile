@@ -18,7 +18,9 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 COPY . /app
 WORKDIR /app
-RUN apt update && apt install curl build-essential cmake ffmpeg sqlite3 ttf-mscorefonts-installer libvips-dev libzxingcore-dev
+# needed for msfonts
+RUN add-apt-repository 'http://deb.debian.org/debian bullseye main contrib non-free'
+RUN apt-get update && apt-get install curl build-essential cmake ffmpeg sqlite3 ttf-mscorefonts-installer libvips-dev libzxingcore-dev
 #RUN apk --no-cache upgrade
 #RUN apk add --no-cache msttcorefonts-installer freetype fontconfig \
 #		vips vips-cpp grep libltdl icu-libs zxing-cpp
