@@ -34,7 +34,7 @@ FROM base AS native-build-0
 
 # Path with ImageMagick
 FROM base AS native-build-1
-RUN apt install libmagick++-dev 
+RUN apt-get install -y libmagick++-dev
 #RUN apk add --no-cache git cmake python3 alpine-sdk \
 #    zlib-dev libpng-dev libjpeg-turbo-dev freetype-dev fontconfig-dev \
 #    libtool libwebp-dev libxml2-dev \
