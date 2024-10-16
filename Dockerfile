@@ -18,7 +18,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 COPY . /app
 WORKDIR /app
-RUN apt install curl build-essential cmake ffmpeg sqlite3 ttf-mscorefonts-installer libvips-dev libzxingcore-dev
+RUN apt update && apt install curl build-essential cmake ffmpeg sqlite3 ttf-mscorefonts-installer libvips-dev libzxingcore-dev
 #RUN apk --no-cache upgrade
 #RUN apk add --no-cache msttcorefonts-installer freetype fontconfig \
 #		vips vips-cpp grep libltdl icu-libs zxing-cpp
